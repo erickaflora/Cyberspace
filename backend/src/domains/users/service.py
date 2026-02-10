@@ -1,10 +1,7 @@
 from sqlalchemy.orm import Session
-from pwdlib import PasswordHash
 from domains.users.models import User
 from domains.users.schemas import UserCreate
-
-# Initialize the password hasher using Argon2
-password_hash = PasswordHash.recommended()
+from auth.utils import hash_password
 
 def get_user_by_username(db: Session, username: str):
     """Fetch a user by username to check for duplicates or login."""
@@ -20,7 +17,7 @@ def create_user(db: Session, user: UserCreate):
     2. Creates the User model.
     3. Commits to the database.
     """
-    hashed_password = password_hash.hash(user.password)
+    hashed_password = hash_password(user.password)
     
     db_user = User(
         username=user.username,

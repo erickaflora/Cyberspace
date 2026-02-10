@@ -26,3 +26,14 @@ def create_post(db: Session, post: PostCreate, user_id: UUID):
     db.commit()
     db.refresh(db_post)
     return db_post
+
+def delete_post(db: Session, post_id: UUID, user_id: UUID):
+    """
+    Deletes a post if it belongs to the requesting user.
+    """
+    post = db.query(Post).filter(Post.id == post_id, Post.owner_id == user_id).first()
+    if post:
+        db.delete(post)
+        db.commit()
+        return True
+    return False
