@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from core.database import get_db
 from domains.users import schemas, service
+from auth.dependencies import get_current_user
+from domains.users.models import User 
+from uuid import UUID
 
 router = APIRouter(
     prefix="/users",
@@ -13,25 +16,11 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user in Cyberspace.
     """
-    # Check if username exists
-    if service.get_user_by_username(db, username=user.username):
-        raise HTTPException(
-            status_code=400,
-            detail="Username already registered."
-        )
-    
-    # Check if email exists
-    if service.get_user_by_email(db, email=user.email):
-        raise HTTPException(
-            status_code=400,
-            detail="Email already registered."
-        )
-
     # Create the user
     return service.create_user(db=db, user=user)
 
 @router.get("/{user_id}", response_model=schemas.UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
+def get_user(user_id: UUID, db: Session = Depends(get_db)):
     """
     Retrieve a user's profile by their ID.
     """
@@ -39,3 +28,25 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
     return user
+
+@router.patch("/me", response_model=schemas.UserResponse)
+def update_own_profile(
+    user_update: schemas.UserUpdate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Guaranteed security: The ID is pulled directly from the token,
+    so it's impossible to update someone else.
+    """
+    return service.update_user(db, user_id=current_user.id, user_update=user_update)
+
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(user_id: UUID, db: Session = Depends(get_db)):
+    """
+    Remove a user from the system.
+    """
+    deleted = service.delete_user(db, user_id=user_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="User not found.")
+    return None # 204 status code sends back an empty response

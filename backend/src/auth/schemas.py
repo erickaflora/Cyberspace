@@ -11,4 +11,4 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """Token payload data"""
     user_id: Optional[int] = None
-    email: Optional[str] = None
+    username: Optional[str] = None

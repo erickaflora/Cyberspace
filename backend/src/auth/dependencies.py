@@ -34,6 +34,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
 
 async def get_current_active_user(current_user: Annotated[TokenData, Depends(get_current_user)]):
     """Ensure the current user is active."""
-    if current_user.disabled:
+    if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
