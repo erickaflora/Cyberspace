@@ -21,11 +21,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plain text password against a hashed password."""
     return password_hash.verify(plain_password, hashed_password)
 
-def authenticate_user(email: str, password: str, db: Session = Depends(get_db)):
-    """Authenticate a user by email and password."""
-    from domains.users.service import get_user_by_email
+def authenticate_user(user: str, password: str, db: Session = Depends(get_db)):
+    """Authenticate a user by user and password."""
+    from domains.users.service import get_user_by_username
 
-    user = get_user_by_email(db, email)
+    user = get_user_by_username(db, user)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

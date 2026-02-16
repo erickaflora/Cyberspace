@@ -29,3 +29,13 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     # Create the user
     return service.create_user(db=db, user=user)
+
+@router.get("/{user_id}", response_model=schemas.UserResponse)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a user's profile by their ID.
+    """
+    user = service.get_user(db, user_id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    return user
