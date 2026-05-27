@@ -10,6 +10,7 @@ from fastapi import Depends, HTTPException, status
 from auth.schemas import TokenData
 from auth.utils import oauth2_scheme
 import jwt
+from domains.users.models import User
 from jwt.exceptions import InvalidTokenError
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
@@ -32,7 +33,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         raise credentials_exception
     return user
 
-async def get_current_active_user(current_user: Annotated[TokenData, Depends(get_current_user)]):
+async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]) -> User:
     """Ensure the current user is active."""
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")

@@ -5,6 +5,7 @@ from uuid import UUID
 from core.database import get_db
 from domains.posts import schemas, service
 from auth.dependencies import get_current_active_user
+from domains.users.models import User
 
 router = APIRouter(
     prefix="/posts",
@@ -21,7 +22,7 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @router.post("/", response_model=schemas.PostResponse, status_code=status.HTTP_201_CREATED)
 def create_post(
     post: schemas.PostCreate, 
-    current_user: Annotated[str, Depends(get_current_active_user)],
+    current_user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db)
 ):
     """

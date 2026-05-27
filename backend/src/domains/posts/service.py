@@ -1,7 +1,23 @@
+from typing import List
 from sqlalchemy.orm import Session
-from domains.posts.models import Post
+from domains.posts.models import Post, Tag
 from domains.posts.schemas import PostCreate
 from uuid import UUID
+
+def get_or_create_tags(db: Session, tag_names: List[str]):
+    """
+    Finds existing tags or creates new ones if they don't exist.
+    """
+    tag_objects = []
+    for name in tag_names:
+        name = name.lower().strip()
+        tag = db.query(Tag).filter(Tag.name == name).first()
+        if not tag:
+            tag = Tag(name=name)
+            db.add(tag)
+            db.flush() # Flush to get the ID without committing the whole transaction
+        tag_objects.append(tag)
+    return tag_objects
 
 def get_posts(db: Session, skip: int = 0, limit: int = 100):
     """
@@ -17,11 +33,14 @@ def create_post(db: Session, post: PostCreate, user_id: UUID):
     """
     Creates a new post linked to the specific user (owner_id).
     """
+    tag_objects = get_or_create_tags(db, post.tags)
+    
     db_post = Post(
         content=post.content,
-        owner_id=user_id # Link the post to the user who sent the request
+        owner_id=user_id, # Link the post to the user who sent the request
+        tags=tag_objects # Associate tags with the post
     )
-    
+
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
