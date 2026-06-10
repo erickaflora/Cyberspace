@@ -44,3 +44,16 @@ def delete_post(
     if not success:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found or not authorized to delete."
 )
+    
+@router.post("/{post_id}", status_code=status.HTTP_200_OK)
+def get_post(
+    post_id: UUID, 
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve a specific post by its ID.
+    """
+    post = service.get_post(db=db, post_id=post_id)
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found.")
+    return post
