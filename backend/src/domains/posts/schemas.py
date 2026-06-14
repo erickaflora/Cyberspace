@@ -14,12 +14,18 @@ class PostBase(BaseModel):
     content: str = Field(..., max_length=280, min_length=1)
 
 class PostCreate(PostBase):
-    tags: Optional[List[str]] = []
+    tags: Optional[List[str]] = None
+
+class LikeResponse(BaseModel):
+    id: UUID
+    user_id: UUID
+    post_id: UUID
+    model_config = ConfigDict(from_attributes=True)
 
 class PostResponse(PostBase):
     id: UUID
     created_at: datetime
     owner_id: UUID
-    tags: List[TagResponse] = []
+    tags: List[TagResponse] = Field(default_factory=list)
+    likes_count: int = 0
     model_config = ConfigDict(from_attributes=True)
-

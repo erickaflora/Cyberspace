@@ -17,7 +17,18 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
     Retrieve the Cyberspace feed (newest first).
     """
-    return service.get_posts(db, skip=skip, limit=limit)
+    posts = service.get_posts(db, skip=skip, limit=limit)
+    return [
+        schemas.PostResponse(
+            id=p.id,
+            content=p.content,
+            created_at=p.created_at,
+            owner_id=p.owner_id,
+            tags=p.tags,
+            likes_count=p.likes.count()
+        )
+        for p in posts
+    ]
 
 @router.post("/", response_model=schemas.PostResponse, status_code=status.HTTP_201_CREATED)
 def create_post(
@@ -34,7 +45,7 @@ def create_post(
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(
     post_id: UUID, 
-    current_user: Annotated[str, Depends(get_current_active_user)],
+    current_user: Annotated[User, Depends(get_current_active_user)],
     db: Session = Depends(get_db)
 ):
     """
@@ -45,15 +56,38 @@ def delete_post(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found or not authorized to delete."
 )
     
-@router.post("/{post_id}", status_code=status.HTTP_200_OK)
+@router.get("/{post_id}", response_model=schemas.PostResponse, status_code=status.HTTP_200_OK)
 def get_post(
     post_id: UUID, 
     db: Session = Depends(get_db)
 ):
     """
-    Retrieve a specific post by its ID.
+    Retrieve a specific post by its ID with its total likes.
+    """
+    post = service.get_post(db=db, post_id=post_id).first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found.")
+    return schemas.PostResponse(
+        id=post.id,
+        content=post.content,
+        created_at=post.created_at,
+        owner_id=post.owner_id,
+        tags=post.tags,
+        likes_count=post.likes.count()
+    )
+
+@router.post("/{post_id}/like", status_code=status.HTTP_200_OK)
+def toggle_like(
+    post_id: UUID, 
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    """
+    Like or unlike a post.
     """
     post = service.get_post(db=db, post_id=post_id)
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found.")
-    return post
+    
+    liked = service.toggle_like(db=db, post_id=post_id, user_id=current_user.id)
+    return {"liked": liked}
