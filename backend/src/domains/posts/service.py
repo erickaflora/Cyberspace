@@ -1,6 +1,7 @@
 from typing import List
 from sqlalchemy.orm import Session
-from domains.posts.models import Post, Tag
+from sqlalchemy.exc import IntegrityError
+from domains.posts.models import Post, Tag, Like
 from domains.posts.schemas import PostCreate
 from uuid import UUID
 
@@ -29,6 +30,12 @@ def get_posts(db: Session, skip: int = 0, limit: int = 100):
         .limit(limit)\
         .all()
 
+def get_post(db: Session, post_id: UUID):
+    """
+    Fetches a specific post by its ID.
+    """
+    return db.query(Post).filter(Post.id == post_id)
+
 def create_post(db: Session, post: PostCreate, user_id: UUID):
     """
     Creates a new post linked to the specific user (owner_id).
@@ -56,3 +63,31 @@ def delete_post(db: Session, post_id: UUID, user_id: UUID):
         db.commit()
         return True
     return False
+
+def count_likes(db: Session, post_id: UUID):
+    """
+    Counts the number of likes for a given post.
+    """
+    return db.query(Post).filter(Post.id == post_id).first().likes.count()
+
+def toggle_like(db: Session, post_id: UUID, user_id: UUID) -> bool:
+    """
+    Toggles a like for a post by a user. 
+    Returns True if liked, False if unliked.
+    """
+    like_query = db.query(Like).filter(Like.post_id == post_id, Like.user_id == user_id)
+    existing_like = like_query.first()
+    
+    if existing_like:
+        like_query.delete(synchronize_session=False)
+        db.commit()
+        return False  # Unliked
+        
+    try:
+        new_like = Like(post_id=post_id, user_id=user_id)
+        db.add(new_like)
+        db.commit()
+        return True  # Liked
+    except IntegrityError:
+        db.rollback()
+        return False

@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy import Table
-from sqlalchemy import Column, String, DateTime, ForeignKey
+from sqlalchemy import Column, String, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -33,3 +33,20 @@ class Post(Base):
     # Replationships
     owner = relationship("User", back_populates="posts")
     tags = relationship("Tag", secondary=post_tags, back_populates="posts")
+    likes = relationship("Like", back_populates="post", lazy="dynamic", cascade="all, delete-orphan")
+    
+class Like(Base):
+    __tablename__ = "likes"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    post_id = Column(UUID(as_uuid=True), ForeignKey("posts.id", ondelete="CASCADE"), nullable=False, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relationships
+    user = relationship("User", back_populates="likes")
+    post = relationship("Post", back_populates="likes")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "post_id", name="uq_user_post_like"),
+    )
