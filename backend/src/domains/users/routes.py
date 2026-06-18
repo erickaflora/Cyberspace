@@ -44,11 +44,21 @@ def update_own_profile(
     return service.update_user(db, user_id=current_user.id, user_update=user_update)
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user_id: UUID, db: Session = Depends(get_db)):
+def delete_user(
+    user_id: UUID, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user) # 1. Secure the route
+):
     """
-    Remove a user from the system.
+    Remove a user from the system. Only owners or admins allowed.
     """
-    deleted = service.delete_user(db, user_id=user_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail="User not found.")
-    return None # 204 status code sends back an empty response
+    target_user = service.get_user(db, user_id=user_id)
+    if not target_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    if current_user.id != target_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="You are not authorized to delete this user profile."
+        )
+    service.delete_user(db, user_id=user_id)
+    return None

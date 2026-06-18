@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from main import app
 from core.database import Base, get_db
 from tests.factories.users import UserFactory
+from auth.dependencies import get_current_user
 
 TEST_DATABASE_URL = "postgresql://netrunner:nightcity@db:5432/test_cyberspace_db"
 engine = create_engine(TEST_DATABASE_URL)
@@ -71,3 +72,23 @@ def client(db_session):
         yield test_client
 
     app.dependency_overrides.clear()
+
+@pytest.fixture
+def logged_in_user(db_session):
+    """
+    Generates a saved user record who acts as the logged-in user session.
+    """
+    user = UserFactory.create()
+    return user
+
+@pytest.fixture
+def auth_client(client, logged_in_user):
+    """
+    Provides a TestClient instance with an Authorization header set for the logged-in user.
+    This simulates authenticated requests in tests that require user context.
+    """
+    def mock_get_current_user():
+        return logged_in_user
+    app.dependency_overrides[get_current_user] = mock_get_current_user
+    yield client
+    app.dependency_overrides.pop(get_current_user, None)
