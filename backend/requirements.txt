@@ -9,3 +9,6 @@ alembic
 pyjwt
 pwdlib[argon2]
 pydantic[email]
+pytest
+factory-boy
+httpx2
