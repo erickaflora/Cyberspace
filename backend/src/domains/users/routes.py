@@ -16,8 +16,10 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user in Cyberspace.
     """
-    # Create the user
-    return service.create_user(db=db, user=user)
+    created_user = service.create_user(db=db, user=user)
+    if not created_user:
+        raise HTTPException(status_code=400, detail="Failed to create user.")
+    return created_user
 
 @router.get("/{user_id}", response_model=schemas.UserResponse)
 def get_user(user_id: UUID, db: Session = Depends(get_db)):

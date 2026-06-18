@@ -10,6 +10,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql
     ports:
       - "${DB_PORT}:5432"
     healthcheck:
