@@ -7,8 +7,10 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      SECRET_KEY: ${SECRET_KEY}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backend/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql
     ports:
       - "${DB_PORT}:5432"
     healthcheck:
@@ -22,6 +24,8 @@ services:
     container_name: cyberspace_backend
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     environment:
