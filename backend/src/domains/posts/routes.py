@@ -23,7 +23,7 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
             id=p.id,
             content=p.content,
             created_at=p.created_at,
-            owner_id=p.owner_id,
+            owner=p.owner,
             tags=p.tags,
             likes_count=p.likes.count()
         )
@@ -71,7 +71,7 @@ def get_post(
         id=post.id,
         content=post.content,
         created_at=post.created_at,
-        owner_id=post.owner_id,
+        owner=post.owner,
         tags=post.tags,
         likes_count=post.likes.count()
     )

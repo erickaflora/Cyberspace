@@ -21,6 +21,13 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Failed to create user.")
     return created_user
 
+@router.get("/me", response_model=schemas.UserResponse)
+def get_own_profile(current_user: User = Depends(get_current_user)):
+    """
+    Retrieve the current logged-in user's profile.
+    """
+    return current_user
+
 @router.get("/{user_id}", response_model=schemas.UserResponse)
 def get_user(user_id: UUID, db: Session = Depends(get_db)):
     """
@@ -38,8 +45,7 @@ def update_own_profile(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Guaranteed security: The ID is pulled directly from the token,
-    so it's impossible to update someone else.
+    Update the current user's profile.
     """
     return service.update_user(db, user_id=current_user.id, user_update=user_update)
 
