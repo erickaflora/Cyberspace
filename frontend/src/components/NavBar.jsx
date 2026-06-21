@@ -3,6 +3,7 @@ import { Box, Stack, Text, UnstyledButton, Group } from '@mantine/core';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Globe, Users, MessageSquare, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Dropdown from './Dropdown';
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ export default function NavBar() {
                   display: 'block',
                   width: '100%',
                   padding: '12px 16px',
-                  borderRadius: '0px', // Minimized radius for retro feel
+                  borderRadius: '0px',
                   backgroundColor: 'transparent',
                   border: '1px solid transparent',
                   color: isActive ? 'var(--neon-bright)' : 'var(--text-primary)',
@@ -108,6 +109,7 @@ export default function NavBar() {
           );
         })}
       </Stack>
+      <Dropdown />
     </Box>
   );
 }
