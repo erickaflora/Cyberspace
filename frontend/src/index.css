@@ -1,0 +1,119 @@
+:root {
+  /*=============COLOR PALETTE=============*/
+  --bg-pure: #000000;
+  --bg-surface: #222222;
+  --neon-matrix: #169976;
+  --neon-bright: #1DCD9F;
+  --text-primary: #B2E0D1;
+  --text-dim: rgba(178, 224, 209, 0.6);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /*=============TYPOGRAPHY STYLE===============*/
+  --fs-h1: 32px;
+  --fs-h2: 24px;
+  --fs-h3: 18px;
+  --fs-body-large: 16px;
+  --fs-body: 14px;
+  --fs-small: 11px;
+
+  /* FONT WEIGHT STYLES */
+  --fw-bold: 700;
+  --fw-normal: 400;
+  --fw-light: 300;
+
+  /* INTERFACE SPACING STYLES */
+  --tracking-wide: 3px;
+  --tracking-normal: 0.5px;
+  --tracking-tight: -0.5px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-pure);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+/* Global utility classes*/
+.text-h1 { font-size: var(--fs-h1); font-weight: var(--fw-bold); letter-spacing: var(--tracking-wide); }
+.text-h2 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--tracking-normal); }
+.text-h3 { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: var(--tracking-normal); }
+.text-body-lg { font-size: var(--fs-body-large); font-weight: var(--fw-normal); }
+.text-body { font-size: var(--fs-body); font-weight: var(--fw-normal); }
+.text-small { font-size: var(--fs-small); font-weight: var(--fw-light); text-transform: uppercase; }
+
+/*===========Scrollbar===========*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-pure);
+  border-left: 1px solid rgba(22, 153, 118, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon-bright);
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--neon-bright);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  box-shadow: 0 0 15px var(--neon-bright);
+}
+
+/* Firefox Compatibility */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-bright) var(--bg-pure);
+}
+
+/* Primary Button Styles */
+.primary-button {
+  margin-top: 10px;
+  background-color: var(--neon-matrix) !important;
+  color: var(--bg-pure) !important;
+  font-family: var(--font-mono) !important;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: bold;
+  border: 1px solid var(--neon-bright) !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 0 8px rgba(22, 153, 118, 0.5) !important;
+}
+
+.primary-button:hover {
+  background-color: var(--neon-bright) !important;
+  box-shadow: 0 0 20px rgba(29, 205, 159, 0.9), 0 0 10px rgba(29, 205, 159, 0.5) !important;
+  transform: translateY(-1.5px);
+}
+
+.primary-button:active {
+  transform: translateY(0.5px);
+}
+
+/* Secondary Button Styles */
+.secondary-button {
+  margin-top: 10px;
+  background-color: transparent !important;
+  color: var(--neon-bright) !important;
+  font-family: var(--font-mono) !important;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: bold;
+  border: 1px dashed var(--neon-matrix) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.secondary-button:hover {
+  background-color: rgba(22, 153, 118, 0.1) !important;
+  border: 1px solid var(--neon-bright) !important;
+  box-shadow: 0 0 15px rgba(29, 205, 159, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+.secondary-button:active {
+  transform: translateY(0.5px);
+}

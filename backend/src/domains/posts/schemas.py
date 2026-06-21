@@ -22,10 +22,16 @@ class LikeResponse(BaseModel):
     post_id: UUID
     model_config = ConfigDict(from_attributes=True)
 
+class PostOwnerResponse(BaseModel):
+    id: UUID
+    username: str
+    profile_name: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
 class PostResponse(PostBase):
     id: UUID
     created_at: datetime
-    owner_id: UUID
+    owner: PostOwnerResponse
     tags: List[TagResponse] = Field(default_factory=list)
     likes_count: int = 0
     model_config = ConfigDict(from_attributes=True)

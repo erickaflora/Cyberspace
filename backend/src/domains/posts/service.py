@@ -10,6 +10,9 @@ def get_or_create_tags(db: Session, tag_names: List[str]):
     Finds existing tags or creates new ones if they don't exist.
     """
     tag_objects = []
+    if not tag_names:
+        return tag_objects
+        
     for name in tag_names:
         name = name.lower().strip()
         tag = db.query(Tag).filter(Tag.name == name).first()
