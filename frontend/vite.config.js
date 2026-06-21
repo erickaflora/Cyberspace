@@ -9,6 +9,11 @@ export default defineConfig({
     port: 5173,
     watch: {
       usePolling: true
+    },
+    proxy: {
+      '/posts': 'http://backend:8000',
+      '/users': 'http://backend:8000',
+      '/auth': 'http://backend:8000'
     }
   }
 })
