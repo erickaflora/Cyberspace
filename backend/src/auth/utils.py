@@ -5,12 +5,29 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from core.config import settings
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends
+from fastapi import Depends, Request, HTTPException, status
 import jwt
 
 # Initialize the password hasher using Argon2
 password_hash = PasswordHash.recommended()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
+
+# COOKIES AUTH
+class OAuth2PasswordBearerWithCookie(OAuth2PasswordBearer):
+    async def __call__(self, request: Request) -> Optional[str]:
+        token = request.cookies.get("access_token")
+        if token:
+            return token
+            
+        try:
+            return await super().__call__(request)
+        except HTTPException:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/auth/token")
 
 def hash_password(password: str) -> str:
     """Hash a plain text password using Argon2."""

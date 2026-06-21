@@ -1,12 +1,23 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from core.database import engine, Base
 from domains.users import router as user_router
 from domains.posts import router as post_router
 from auth import router as auth_router
-# Initialize Tables (Basic Setup)
+
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Cyberspace MVP")
+app = FastAPI(title="Cyberspace")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include the domain routers
 app.include_router(user_router)
