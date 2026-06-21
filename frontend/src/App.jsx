@@ -5,6 +5,7 @@ import { useAuthContext } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import FeedPage from './pages/FeedPage';
+import MainLayout from './layouts/MainLayout';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuthContext();
@@ -49,7 +50,9 @@ export default function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <FeedPage />
+            <MainLayout>
+              <FeedPage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
