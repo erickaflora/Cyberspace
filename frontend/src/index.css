@@ -8,6 +8,14 @@
   --text-dim: rgba(178, 224, 209, 0.6);
   --font-mono: 'JetBrains Mono', monospace;
 
+  /*========Secondary Component Palette========*/
+  --secondary-bg-pure: rgba(16, 11, 26, 0.95);
+  --secondary-bg-surface: #1a1d24;
+  --secondary-accent-matrix: #169976;
+  --secondary-accent-bright: #9dfd23;
+  --secondary-text-primary: #5d6778;
+  --secondary-text-dim: rgba(93, 103, 120, 0.6);
+
   /*=============TYPOGRAPHY STYLE===============*/
   --fs-h1: 32px;
   --fs-h2: 24px;
@@ -40,7 +48,7 @@ body {
 .text-h3 { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: var(--tracking-normal); }
 .text-body-lg { font-size: var(--fs-body-large); font-weight: var(--fw-normal); }
 .text-body { font-size: var(--fs-body); font-weight: var(--fw-normal); }
-.text-small { font-size: var(--fs-small); font-weight: var(--fw-light); text-transform: uppercase; }
+.text-small { font-size: var(--fs-small); font-weight: var(--fw-light); }
 
 /*===========Scrollbar===========*/
 ::-webkit-scrollbar {
@@ -166,4 +174,57 @@ body {
 .mantine-Menu-divider {
   border-top: 1px solid rgba(22, 153, 118, 0.2) !important;
 }
-
+
+/* Custom interactive classes for PostCard and general usage */
+.cyber-badge {
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(22, 153, 118, 0.3) !important;
+  color: var(--neon-bright) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.cyber-badge:hover {
+  border-color: var(--neon-bright) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 8px rgba(29, 205, 159, 0.4) !important;
+}
+
+.cyber-card-action {
+  cursor: pointer;
+  color: var(--secondary-text-dim);
+  transition: all 0.2s ease;
+}
+
+.cyber-card-action:hover {
+  color: var(--secondary-accent-bright) !important;
+}
+
+.cyber-card-delete {
+  cursor: pointer;
+  color: var(--secondary-text-dim);
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.cyber-card-delete:hover {
+  color: #ff4a4a !important;
+  filter: drop-shadow(0 0 4px #ff4a4a);
+}
+
+.menu-item-red {
+  color: #ff4a4a !important;
+}
+
+.menu-item-red:hover {
+  background-color: rgba(255, 74, 74, 0.12) !important;
+  color: #ff6b6b !important;
+}
+
+
